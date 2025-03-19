@@ -1,11 +1,11 @@
 module.exports = {
   // Lint & Prettify TS and JS files
-  "**/*.{ts,tsx,js,jsx}": (filenames) => [
-    `prettier --write ${filenames.join(" ")}`,
-    `eslint --fix ${filenames.join(" ")}`,
-    `tsc --noEmit`
+  "**/*.{ts,tsx,js,jsx}": [
+    "prettier --write",
+    "eslint --fix",
+    "tsc --noEmit"
   ],
 
   // Prettify only Markdown and JSON files
-  "**/*.{md,json}": (filenames) => `prettier --write ${filenames.join(" ")}`
+  "**/*.{md,json}": "prettier --write"
 }; 

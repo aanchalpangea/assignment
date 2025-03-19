@@ -9,7 +9,8 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:unused-imports/recommended"
   ],
   "ignorePatterns": ["dist", ".eslintrc.json", "node_modules"],
   "parser": "@typescript-eslint/parser",
@@ -32,7 +33,7 @@
       { "allowConstantExports": true }
     ],
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": "off",
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
       "error",

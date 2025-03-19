@@ -9,11 +9,7 @@ const PrivateRoutes: React.FC = () => {
   const defaultPublicRoute = ROUTES.HOME;
 
   // If not authenticated, redirect to the default public route
-  return isAuthenticated ? (
-    <Outlet />
-  ) : (
-    <Navigate to={defaultPublicRoute} replace />
-  );
+  return isAuthenticated ? <Outlet /> : <Navigate to={defaultPublicRoute} replace />;
 };
 
 export default PrivateRoutes;
