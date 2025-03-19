@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@theme {
+  /* custom properties define here for every properties there is prefix --color- and --font- and many more read from docs */
+
+  --color-pangea-blue: #1d7ddd;
+}
