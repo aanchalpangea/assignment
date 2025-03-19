@@ -2,16 +2,30 @@
   "root": true,
   "env": {
     "browser": true,
-    "es2020": true
+    "es2020": true,
+    "node": true
   },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
     "plugin:react-hooks/recommended"
   ],
-  "ignorePatterns": ["dist", ".eslintrc.json"],
+  "ignorePatterns": ["dist", ".eslintrc.json", "node_modules"],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["react-refresh", "unused-imports"],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react", "react-refresh", "unused-imports"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
     "react-refresh/only-export-components": [
       "warn",
@@ -31,6 +45,7 @@
     ],
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off"
   }
 } 
