@@ -126,16 +126,3 @@ src/
   - `{componentName}Model.tsx` (common model file with shared interfaces)  
 
 ---
-
-## **Contributing**
-Contributions are welcome! If you would like to improve this template, please fork the repository, make your changes, and submit a pull request.
-
----
-
-## **License**
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-This README provides a structured and well-documented guide for your GitHub repository. 🚀 Let me know if you'd like any changes!
-
