@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   console.log("PPPPPPPPPPPPPPPPP");
+  console.log("PPPPPPPPPPPPPPPPP");
   return (
     <header className="bg-blue-500 py-4 text-white text-lg">
       this is header
