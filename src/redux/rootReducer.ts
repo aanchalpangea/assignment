@@ -1,11 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit';
-
-// Import your reducers here
-// import exampleReducer from './reducers/exampleReducer';
+import productReducer from './productslice';
 
 const rootReducer = combineReducers({
-  // Add your reducers here
-  // example: exampleReducer,
+    product: productReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
