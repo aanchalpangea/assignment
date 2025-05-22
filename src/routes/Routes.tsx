@@ -1,6 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 import DashboardLayout from '../components/home/DashboardLayout';
-import DashboardPage from '../components/home/Dashboardpage';
+import DashboardPage from '../components/home/DashboardPage';
 
 const AppRoutes = () => {
     return useRoutes([

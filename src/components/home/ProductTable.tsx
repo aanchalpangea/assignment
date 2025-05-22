@@ -14,6 +14,13 @@ import {
 import { BarChart, Delete } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { deleteProduct, selectProduct } from '../../redux/productslice';
+import {
+    paperStyle,
+    headerBoxStyle,
+    titleStyle,
+    searchInputStyle,
+    actionsBoxStyle,
+} from '../../styled/ProductTableStyles';
 
 const ProductTable: React.FC = () => {
     const products = useAppSelector(state => state.product.products);
@@ -26,23 +33,15 @@ const ProductTable: React.FC = () => {
     );
 
     return (
-        <Paper sx={{ p: 2, flex: 1 }}>
-            {/* Header with title and search field side by side */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 2,
-                }}
-            >
-                <Typography variant="h5" fontWeight={600}>
+        <Paper sx={paperStyle}>
+            <Box sx={headerBoxStyle}>
+                <Typography variant="h5" sx={titleStyle}>
                     Products
                 </Typography>
                 <TextField
                     placeholder="Search products..."
                     size="small"
-                    sx={{ width: '250px' }}
+                    sx={searchInputStyle}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                 />
@@ -72,7 +71,7 @@ const ProductTable: React.FC = () => {
                             <TableCell>${p.revenue.toFixed(2)}</TableCell>
                             <TableCell>{p.added}</TableCell>
                             <TableCell>
-                                <Box sx={{ display: 'flex' }}>
+                                <Box sx={actionsBoxStyle}>
                                     <IconButton
                                         onClick={() =>
                                             dispatch(selectProduct(p.id))

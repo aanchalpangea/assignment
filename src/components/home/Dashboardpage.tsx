@@ -7,6 +7,15 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import Dashboard from './Dashboard';
+import {
+    containerBox,
+    gridBox,
+    paperStyle,
+    statHeader,
+    iconContainer,
+    statValue,
+    statTrend,
+} from '../../styled/DashboardPageStyles';
 
 const stats = [
     {
@@ -37,40 +46,11 @@ const stats = [
 
 const DashboardPage: React.FC = () => {
     return (
-        <Box sx={{ p: 3 }}>
-            {/* Stats Grid */}
-            <Box
-                sx={{
-                    display: 'grid',
-                    gridTemplateColumns: {
-                        xs: '1fr',
-                        sm: '1fr 1fr',
-                        md: 'repeat(4, 1fr)',
-                    },
-                    gap: 4,
-                    mb: 4,
-                }}
-            >
+        <Box sx={containerBox}>
+            <Box sx={gridBox}>
                 {stats.map(stat => (
-                    <Paper
-                        key={stat.title}
-                        sx={{
-                            p: 4,
-                            minHeight: 150,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                        }}
-                        elevation={3}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                mb: 1,
-                            }}
-                        >
+                    <Paper key={stat.title} sx={paperStyle} elevation={3}>
+                        <Box sx={statHeader}>
                             <Typography
                                 variant="h6"
                                 color="text.secondary"
@@ -78,28 +58,21 @@ const DashboardPage: React.FC = () => {
                             >
                                 {stat.title}
                             </Typography>
-                            <Box
-                                sx={{
-                                    backgroundColor: '#BBDEFB',
-                                    borderRadius: '50%',
-                                    width: 36,
-                                    height: 36,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
+                            <Box sx={iconContainer}>
                                 {React.cloneElement(stat.icon, {
                                     sx: { color: '#0D47A1', fontSize: 24 },
                                 })}
                             </Box>
                         </Box>
-
-                        <Typography variant="h4" fontWeight={700} mb={1}>
+                        <Typography
+                            variant="h4"
+                            fontWeight={700}
+                            sx={statValue}
+                        >
                             {stat.value}
                         </Typography>
                         {stat.trend && (
-                            <Typography variant="body1" color="success.main">
+                            <Typography variant="body1" sx={statTrend}>
                                 {stat.trend} vs last month
                             </Typography>
                         )}

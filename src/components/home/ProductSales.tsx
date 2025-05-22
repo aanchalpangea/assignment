@@ -8,6 +8,12 @@ import {
 } from '@mui/material';
 import * as d3 from 'd3';
 import { useAppSelector } from '../../hooks';
+import {
+    paperStyle,
+    headerStyle,
+    toggleGroupStyle,
+    statsContainer,
+} from '../../styled/ProductSalesStyles';
 
 const ProductSales: React.FC = () => {
     const { selectedProduct } = useAppSelector(state => state.product);
@@ -28,7 +34,6 @@ const ProductSales: React.FC = () => {
         const xLabels = data.map((_, i) => `${i + 1}`);
 
         const x = d3.scaleBand().domain(xLabels).range([0, width]).padding(0.2);
-
         const yMax = d3.max(data)!;
         const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
 
@@ -41,19 +46,17 @@ const ProductSales: React.FC = () => {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        // Axes
         g.append('g')
             .attr('transform', `translate(0,${height})`)
             .call(
                 d3
                     .axisBottom(x)
-                    .tickValues(x.domain().filter((d, i) => i % 3 === 0))
+                    .tickValues(x.domain().filter((_, i) => i % 3 === 0))
             );
 
         g.append('g').call(d3.axisLeft(y));
 
         if (view === 'revenue') {
-            // Line chart(Revenue)
             const line = d3
                 .line<number>()
                 .x((_, i) => x(`${i + 1}`)! + x.bandwidth() / 2)
@@ -76,7 +79,6 @@ const ProductSales: React.FC = () => {
                 .attr('r', 3)
                 .attr('fill', '#03A9F4');
         } else {
-            // Bar chart (Orders)
             g.selectAll('.bar')
                 .data(data)
                 .enter()
@@ -93,12 +95,12 @@ const ProductSales: React.FC = () => {
     if (!selectedProduct) return null;
 
     return (
-        <Paper sx={{ p: 3, flex: 1 }}>
-            <Typography variant="h5" fontWeight={600}>
+        <Paper sx={paperStyle}>
+            <Typography variant="h5" sx={headerStyle}>
                 Sales for {selectedProduct.name}
             </Typography>
             <ToggleButtonGroup
-                sx={{ my: 2 }}
+                sx={toggleGroupStyle}
                 exclusive
                 value={view}
                 onChange={(_, val) => val && setView(val)}
@@ -107,9 +109,7 @@ const ProductSales: React.FC = () => {
                 <ToggleButton value="orders">Orders</ToggleButton>
             </ToggleButtonGroup>
             <svg ref={chartRef}></svg>
-            <Box
-                sx={{ display: 'flex', mt: 2, justifyContent: 'space-between' }}
-            >
+            <Box sx={statsContainer}>
                 <Box>
                     <Typography variant="caption">Total Revenue</Typography>
                     <Typography variant="h6" fontWeight={600}>

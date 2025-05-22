@@ -11,9 +11,22 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SideNavbar from './SideNavbar';
-import DashboardPage from './Dashboardpage';
+import DashboardPage from './DashboardPage';
 import { useAppDispatch } from '../../hooks';
 import { addProduct } from '../../redux/productslice';
+import {
+    layoutBox,
+    sidebarBox,
+    mainContentBox,
+    headerBox,
+    addButtonStyle,
+    modalBox,
+    modalHeader,
+    descriptionText,
+    textFieldStyle,
+    dualInputBox,
+    submitButton,
+} from '../../styled/DashboardLayoutStyles';
 
 const DashboardLayout: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -35,45 +48,20 @@ const DashboardLayout: React.FC = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
-            <Box
-                sx={{
-                    width: collapsed ? '5vw' : '20vw',
-                    transition: 'width 0.3s ease',
-                }}
-            >
+        <Box sx={layoutBox}>
+            <Box sx={sidebarBox(collapsed)}>
                 <SideNavbar collapsed={collapsed} setCollapsed={setCollapsed} />
             </Box>
 
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    width: collapsed ? '95vw' : '80vw',
-                    transition: 'width 0.3s ease',
-                    p: 3,
-                    fontSize: '1.25rem',
-                }}
-            >
+            <Box component="main" sx={mainContentBox(collapsed)}>
                 <Toolbar />
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mb: 3,
-                    }}
-                >
+                <Box sx={headerBox}>
                     <Typography variant="h2" fontWeight={700}>
                         Dashboard
                     </Typography>
                     <Button
                         variant="contained"
-                        sx={{
-                            textTransform: 'none',
-                            borderRadius: '10px',
-                            fontSize: '1.125rem',
-                        }}
+                        sx={addButtonStyle}
                         onClick={handleOpen}
                     >
                         + Add Product
@@ -82,29 +70,9 @@ const DashboardLayout: React.FC = () => {
 
                 <DashboardPage />
 
-                {/* Modal */}
                 <Modal open={open} onClose={handleClose}>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 600,
-                            bgcolor: 'background.paper',
-                            borderRadius: 2,
-                            boxShadow: 24,
-                            p: 5,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                mb: 3,
-                            }}
-                        >
+                    <Box sx={modalBox}>
+                        <Box sx={modalHeader}>
                             <Typography variant="h5" fontWeight={700}>
                                 Add New Product
                             </Typography>
@@ -116,7 +84,7 @@ const DashboardLayout: React.FC = () => {
                         <Typography
                             variant="body1"
                             color="text.secondary"
-                            mb={3}
+                            sx={descriptionText}
                         >
                             Create a new product to add to your inventory.
                         </Typography>
@@ -127,11 +95,7 @@ const DashboardLayout: React.FC = () => {
                             variant="outlined"
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            sx={{
-                                mb: 3,
-                                '& .MuiInputBase-input': { fontSize: '1.1rem' },
-                                '& .MuiInputLabel-root': { fontSize: '1rem' },
-                            }}
+                            sx={textFieldStyle}
                         />
 
                         <TextField
@@ -140,11 +104,7 @@ const DashboardLayout: React.FC = () => {
                             select
                             value={category}
                             onChange={e => setCategory(e.target.value)}
-                            sx={{
-                                mb: 3,
-                                '& .MuiInputBase-input': { fontSize: '1.1rem' },
-                                '& .MuiInputLabel-root': { fontSize: '1rem' },
-                            }}
+                            sx={textFieldStyle}
                         >
                             <MenuItem value="">Select a category</MenuItem>
                             <MenuItem value="accessories">Accessories</MenuItem>
@@ -156,21 +116,14 @@ const DashboardLayout: React.FC = () => {
                             </MenuItem>
                         </TextField>
 
-                        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                        <Box sx={dualInputBox}>
                             <TextField
                                 label="Price ($)"
                                 type="number"
                                 value={price}
                                 onChange={e => setPrice(e.target.value)}
                                 fullWidth
-                                sx={{
-                                    '& .MuiInputBase-input': {
-                                        fontSize: '1.1rem',
-                                    },
-                                    '& .MuiInputLabel-root': {
-                                        fontSize: '1rem',
-                                    },
-                                }}
+                                sx={textFieldStyle}
                             />
                             <TextField
                                 label="Stock"
@@ -178,21 +131,14 @@ const DashboardLayout: React.FC = () => {
                                 value={stock}
                                 onChange={e => setStock(e.target.value)}
                                 fullWidth
-                                sx={{
-                                    '& .MuiInputBase-input': {
-                                        fontSize: '1.1rem',
-                                    },
-                                    '& .MuiInputLabel-root': {
-                                        fontSize: '1rem',
-                                    },
-                                }}
+                                sx={textFieldStyle}
                             />
                         </Box>
 
                         <Button
                             variant="contained"
                             fullWidth
-                            sx={{ fontSize: '1.1rem', py: 1.25 }}
+                            sx={submitButton}
                             onClick={() => {
                                 if (!name || !category || !price || !stock)
                                     return;
@@ -208,7 +154,6 @@ const DashboardLayout: React.FC = () => {
                                         added: new Date().toLocaleDateString(),
                                     })
                                 );
-
                                 handleClose();
                             }}
                         >

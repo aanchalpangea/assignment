@@ -1,9 +1,21 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Typography, Paper } from '@mui/material';
 import * as d3 from 'd3';
 import { revenueTrendData, bestSellingProducts } from '../../data';
 import ProductTable from './ProductTable';
 import ProductSales from './ProductSales';
+import {
+    DashboardContainer,
+    ChartAndProductsWrapper,
+    RevenueBox,
+    BestSellingBox,
+    SectionTitle,
+    ProductItem,
+    ProductName,
+    ProductInfo,
+    ProgressBar,
+    Progress,
+    BottomSection,
+} from '../../styled/DashboardStyles';
 
 const Dashboard: React.FC = () => {
     const chartRef = useRef<SVGSVGElement | null>(null);
@@ -50,7 +62,6 @@ const Dashboard: React.FC = () => {
         g.append('g')
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(x));
-
         g.append('g').call(d3.axisLeft(y));
 
         g.append('path')
@@ -74,76 +85,36 @@ const Dashboard: React.FC = () => {
     }, []);
 
     return (
-        <Box sx={{ p: 3, overflowX: 'hidden' }}>
-            {/* Revenue Trend and Best Selling Products Side by Side */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: '20px',
-                    mb: 3,
-                    flexDirection: { xs: 'column', md: 'row' },
-                }}
-            >
-                {/* Revenue Trend Box */}
-                <Paper sx={{ flex: '0 0 55%', p: 2 }}>
-                    <Typography variant="h6" fontWeight={600} mb={2}>
-                        Revenue Trend
-                    </Typography>
+        <DashboardContainer>
+            <ChartAndProductsWrapper>
+                <RevenueBox>
+                    <SectionTitle variant="h6">Revenue Trend</SectionTitle>
                     <svg ref={chartRef}></svg>
-                </Paper>
-
-                {/* Best Selling Products */}
-                <Paper sx={{ flex: '0 0 40%', p: 2 }}>
-                    <Typography variant="h6" fontWeight={600} mb={2}>
+                </RevenueBox>
+                <BestSellingBox>
+                    <SectionTitle variant="h6">
                         Best Selling Products
-                    </Typography>
+                    </SectionTitle>
                     {bestSellingProducts.map(product => (
-                        <Box key={product.name} sx={{ mb: 2 }}>
-                            <Typography fontWeight={500}>
-                                {product.name}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                gutterBottom
-                            >
+                        <ProductItem key={product.name}>
+                            <ProductName>{product.name}</ProductName>
+                            <ProductInfo variant="body2" gutterBottom>
                                 ${product.revenue.toFixed(2)} · {product.orders}{' '}
                                 orders
-                            </Typography>
-                            <Box
-                                sx={{
-                                    height: 8,
-                                    borderRadius: 5,
-                                    backgroundColor: '#e0e0e0',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        height: '100%',
-                                        width: `${product.percent}%`,
-                                        backgroundColor: '#1976d2',
-                                    }}
-                                />
-                            </Box>
-                        </Box>
+                            </ProductInfo>
+                            <ProgressBar>
+                                <Progress percent={product.percent} />
+                            </ProgressBar>
+                        </ProductItem>
                     ))}
-                </Paper>
-            </Box>
+                </BestSellingBox>
+            </ChartAndProductsWrapper>
 
-            {/* Product Table and Sales - Side by Side */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    gap: 3,
-                }}
-            >
+            <BottomSection>
                 <ProductTable />
                 <ProductSales />
-            </Box>
-        </Box>
+            </BottomSection>
+        </DashboardContainer>
     );
 };
 
