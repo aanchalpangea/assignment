@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { revenueTrendData, bestSellingProducts } from '../../data';
+import { revenueTrendData } from '../../data';
 import ProductTable from './ProductTable';
 import ProductSales from './ProductSales';
+import { useAppSelector } from '../../hooks';
+
 import {
     DashboardContainer,
     ChartAndProductsWrapper,
@@ -16,9 +18,36 @@ import {
     Progress,
     BottomSection,
 } from '../../styled/DashboardStyles';
+import { Button, Box } from '@mui/material';
 
 const Dashboard: React.FC = () => {
     const chartRef = useRef<SVGSVGElement | null>(null);
+    const products = useAppSelector(state => state.product.products);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
+    const enrichedProducts = [...products]
+        .map(p => ({
+            ...p,
+            revenue:
+                p.revenue === 0
+                    ? Math.floor(Math.random() * 10000) + 1
+                    : p.revenue,
+        }))
+        .sort((a, b) => b.revenue - a.revenue)
+        .map(p => ({
+            name: p.name,
+            revenue: p.revenue,
+            orders: p.sales?.length || 0,
+            percent: Math.min((p.revenue / 10000) * 100, 100),
+        }));
+
+    const totalPages = Math.ceil(enrichedProducts.length / itemsPerPage);
+    const paginatedProducts = enrichedProducts.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     useEffect(() => {
         if (!chartRef.current) return;
@@ -95,7 +124,7 @@ const Dashboard: React.FC = () => {
                     <SectionTitle variant="h6">
                         Best Selling Products
                     </SectionTitle>
-                    {bestSellingProducts.map(product => (
+                    {paginatedProducts.map(product => (
                         <ProductItem key={product.name}>
                             <ProductName>{product.name}</ProductName>
                             <ProductInfo variant="body2" gutterBottom>
@@ -107,6 +136,39 @@ const Dashboard: React.FC = () => {
                             </ProgressBar>
                         </ProductItem>
                     ))}
+                    {totalPages > 1 && (
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            mt={2}
+                            gap={2}
+                        >
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() =>
+                                    setCurrentPage(prev =>
+                                        Math.max(prev - 1, 1)
+                                    )
+                                }
+                                disabled={currentPage === 1}
+                            >
+                                Prev
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() =>
+                                    setCurrentPage(prev =>
+                                        Math.min(prev + 1, totalPages)
+                                    )
+                                }
+                                disabled={currentPage === totalPages}
+                            >
+                                Next
+                            </Button>
+                        </Box>
+                    )}
                 </BestSellingBox>
             </ChartAndProductsWrapper>
 

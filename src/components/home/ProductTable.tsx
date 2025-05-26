@@ -10,6 +10,7 @@ import {
     Typography,
     Paper,
     Box,
+    TablePagination,
 } from '@mui/material';
 import { BarChart, Delete } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../../hooks';
@@ -27,9 +28,20 @@ const ProductTable: React.FC = () => {
     const dispatch = useAppDispatch();
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage] = useState(5);
 
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const handleChangePage = (_: unknown, newPage: number) => {
+        setPage(newPage);
+    };
+
+    const filteredProducts = products
+        .filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => a.category.localeCompare(b.category));
+
+    const paginatedProducts = filteredProducts.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
     );
 
     return (
@@ -60,7 +72,7 @@ const ProductTable: React.FC = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {filteredProducts.map(p => (
+                    {paginatedProducts.map(p => (
                         <TableRow key={p.id}>
                             <TableCell>
                                 <strong>{p.name}</strong>
@@ -92,6 +104,15 @@ const ProductTable: React.FC = () => {
                     ))}
                 </TableBody>
             </Table>
+
+            <TablePagination
+                component="div"
+                count={filteredProducts.length}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[]}
+            />
         </Paper>
     );
 };

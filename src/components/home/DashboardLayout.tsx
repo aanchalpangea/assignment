@@ -31,12 +31,15 @@ import {
 const DashboardLayout: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [open, setOpen] = useState(false);
+    const [categoryModalOpen, setCategoryModalOpen] = useState(false);
     const dispatch = useAppDispatch();
 
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
     const [price, setPrice] = useState('');
     const [stock, setStock] = useState('');
+    const [customCategories, setCustomCategories] = useState<string[]>([]);
+    const [newCategory, setNewCategory] = useState('');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -45,6 +48,11 @@ const DashboardLayout: React.FC = () => {
         setCategory('');
         setPrice('');
         setStock('');
+    };
+
+    const handleCategoryModalClose = () => {
+        setCategoryModalOpen(false);
+        setNewCategory('');
     };
 
     return (
@@ -59,17 +67,27 @@ const DashboardLayout: React.FC = () => {
                     <Typography variant="h2" fontWeight={700}>
                         Dashboard
                     </Typography>
-                    <Button
-                        variant="contained"
-                        sx={addButtonStyle}
-                        onClick={handleOpen}
-                    >
-                        + Add Product
-                    </Button>
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Button
+                            variant="outlined"
+                            sx={addButtonStyle}
+                            onClick={() => setCategoryModalOpen(true)}
+                        >
+                            Category
+                        </Button>
+                        <Button
+                            variant="contained"
+                            sx={addButtonStyle}
+                            onClick={handleOpen}
+                        >
+                            + Add Product
+                        </Button>
+                    </Box>
                 </Box>
 
                 <DashboardPage />
 
+                {/* Add Product Modal */}
                 <Modal open={open} onClose={handleClose}>
                     <Box sx={modalBox}>
                         <Box sx={modalHeader}>
@@ -114,6 +132,11 @@ const DashboardLayout: React.FC = () => {
                             <MenuItem value="HomeNKitchen">
                                 Home & Kitchen
                             </MenuItem>
+                            {customCategories.map(cat => (
+                                <MenuItem key={cat} value={cat}>
+                                    {cat}
+                                </MenuItem>
+                            ))}
                         </TextField>
 
                         <Box sx={dualInputBox}>
@@ -142,7 +165,6 @@ const DashboardLayout: React.FC = () => {
                             onClick={() => {
                                 if (!name || !category || !price || !stock)
                                     return;
-
                                 dispatch(
                                     addProduct({
                                         id: Date.now().toString(),
@@ -158,6 +180,49 @@ const DashboardLayout: React.FC = () => {
                             }}
                         >
                             Add Product
+                        </Button>
+                    </Box>
+                </Modal>
+
+                {/* Custom Category Modal */}
+                <Modal
+                    open={categoryModalOpen}
+                    onClose={handleCategoryModalClose}
+                >
+                    <Box sx={modalBox}>
+                        <Box sx={modalHeader}>
+                            <Typography variant="h5" fontWeight={700}>
+                                Add New Category
+                            </Typography>
+                            <IconButton onClick={handleCategoryModalClose}>
+                                <CloseIcon fontSize="medium" />
+                            </IconButton>
+                        </Box>
+
+                        <TextField
+                            fullWidth
+                            label="New Category Name"
+                            variant="outlined"
+                            value={newCategory}
+                            onChange={e => setNewCategory(e.target.value)}
+                            sx={textFieldStyle}
+                        />
+
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            sx={submitButton}
+                            onClick={() => {
+                                if (newCategory.trim()) {
+                                    setCustomCategories(prev => [
+                                        ...prev,
+                                        newCategory.trim(),
+                                    ]);
+                                    handleCategoryModalClose();
+                                }
+                            }}
+                        >
+                            Add Category
                         </Button>
                     </Box>
                 </Modal>

@@ -15,10 +15,18 @@ import {
     statsContainer,
 } from '../../styled/ProductSalesStyles';
 
+type SalesData = {
+    dateLabel: string;
+    revenue: number;
+    orders: number;
+};
+
 const ProductSales: React.FC = () => {
     const { selectedProduct } = useAppSelector(state => state.product);
     const chartRef = useRef<SVGSVGElement | null>(null);
-    const [view, setView] = useState<'revenue' | 'orders'>('revenue');
+    const [view, setView] = useState<'revenue' | 'orders' | 'stacked'>(
+        'revenue'
+    );
 
     useEffect(() => {
         if (!selectedProduct || !chartRef.current) return;
@@ -30,12 +38,30 @@ const ProductSales: React.FC = () => {
         const height = 200;
         const margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
-        const data = selectedProduct.sales;
-        const xLabels = data.map((_, i) => `${i + 1}`);
+        const sales = selectedProduct.sales;
 
-        const x = d3.scaleBand().domain(xLabels).range([0, width]).padding(0.2);
-        const yMax = d3.max(data)!;
-        const y = d3.scaleLinear().domain([0, yMax]).range([height, 0]);
+        const today = new Date();
+        const data: SalesData[] = sales.map((val, i) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() - (sales.length - 1 - i));
+            return {
+                dateLabel: `${date.getDate()}/${date.getMonth() + 1}`,
+                revenue: val,
+                orders: val / 10,
+            };
+        });
+
+        const keys: (keyof SalesData)[] = ['revenue', 'orders'];
+        const x = d3
+            .scaleBand()
+            .domain(data.map(d => d.dateLabel))
+            .range([0, width])
+            .padding(0.2);
+
+        const y = d3
+            .scaleLinear()
+            .domain([0, d3.max(data, d => d.revenue + d.orders)!])
+            .range([height, 0]);
 
         svg.attr('width', width + margin.left + margin.right).attr(
             'height',
@@ -56,11 +82,33 @@ const ProductSales: React.FC = () => {
 
         g.append('g').call(d3.axisLeft(y));
 
-        if (view === 'revenue') {
+        if (view === 'stacked') {
+            const color = d3
+                .scaleOrdinal<string>()
+                .domain(keys)
+                .range(['#1976d2', '#4caf50']);
+
+            const stackedData = d3.stack<SalesData>().keys(keys)(data);
+
+            g.selectAll('g.layer')
+                .data(stackedData)
+                .enter()
+                .append('g')
+                .attr('class', 'layer')
+                .attr('fill', d => color(d.key)!)
+                .selectAll('rect')
+                .data(d => d)
+                .enter()
+                .append('rect')
+                .attr('x', d => x(d.data.dateLabel)!)
+                .attr('y', d => y(d[1]))
+                .attr('height', d => y(d[0]) - y(d[1]))
+                .attr('width', x.bandwidth());
+        } else if (view === 'revenue') {
             const line = d3
-                .line<number>()
-                .x((_, i) => x(`${i + 1}`)! + x.bandwidth() / 2)
-                .y(d => y(d))
+                .line<SalesData>()
+                .x((d: SalesData) => x(d.dateLabel)! + x.bandwidth() / 2)
+                .y((d: SalesData) => y(d.revenue))
                 .curve(d3.curveMonotoneX);
 
             g.append('path')
@@ -74,8 +122,11 @@ const ProductSales: React.FC = () => {
                 .data(data)
                 .enter()
                 .append('circle')
-                .attr('cx', (_, i) => x(`${i + 1}`)! + x.bandwidth() / 2)
-                .attr('cy', d => y(d))
+                .attr(
+                    'cx',
+                    (d: SalesData) => x(d.dateLabel)! + x.bandwidth() / 2
+                )
+                .attr('cy', (d: SalesData) => y(d.revenue))
                 .attr('r', 3)
                 .attr('fill', '#03A9F4');
         } else {
@@ -84,10 +135,10 @@ const ProductSales: React.FC = () => {
                 .enter()
                 .append('rect')
                 .attr('class', 'bar')
-                .attr('x', (_, i) => x(`${i + 1}`)!)
-                .attr('y', d => y(d))
+                .attr('x', (d: SalesData) => x(d.dateLabel)!)
+                .attr('y', (d: SalesData) => y(d.orders))
                 .attr('width', x.bandwidth())
-                .attr('height', d => height - y(d))
+                .attr('height', (d: SalesData) => height - y(d.orders))
                 .attr('fill', '#1976d2');
         }
     }, [selectedProduct, view]);
@@ -107,6 +158,7 @@ const ProductSales: React.FC = () => {
             >
                 <ToggleButton value="revenue">Revenue</ToggleButton>
                 <ToggleButton value="orders">Orders</ToggleButton>
+                <ToggleButton value="stacked">Stacked</ToggleButton>
             </ToggleButtonGroup>
             <svg ref={chartRef}></svg>
             <Box sx={statsContainer}>
